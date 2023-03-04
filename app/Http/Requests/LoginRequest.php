@@ -30,7 +30,6 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'min:8', 'max:15', Password::min(8)->mixedCase()->numbers()->symbols()],
         ];
     }
-
     /**
      * Get the error messages for the defined validation rules.
      *
