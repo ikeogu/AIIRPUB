@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\SubmitArticleController;
+use App\Http\Controllers\Api\EditorController;
+use App\Http\Controllers\Api\JournalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +27,12 @@ Route::group(['middleware' => ['cors', 'json.response']], static function () {
         ]));
 
         Route::group(['prefix' => 'auth'], static function () {
-            Route::post('login', [AuthController::class, 'login'])->name('login');
+
+            Route::post('/access_token', [AuthController::class, 'getAccessToken']);
+            Route::delete('/access_token', [AuthController::class, 'logout'])->name('delete-token');
             Route::post('register', [AuthController::class, 'register'])->name('register');
+            Route::post('login', [AuthController::class, 'login'])->name('login');
+
 
             Route::post('confirm-email', [AuthController::class, 'confirmEmail'])->name('confirm-email');
             Route::post('password-reset', [AuthController::class, 'resetPasword'])->name('password-reset');
@@ -41,7 +49,13 @@ Route::group(['middleware' => ['cors', 'json.response']], static function () {
                 Route::post('resend-otp', [AuthController::class, 'resendOtp'])->name('resend-otp');
                 Route::delete('logout', [AuthController::class, 'logout'])->name('logout');
             });
-             Route::apiResource('category', CategoryController::class);
+
+            Route::apiResource('category', CategoryController::class);
+            Route::apiResource('editors', EditorController::class);
+            Route::apiResource('submit-article', SubmitArticleController::class);
+            Route::apiResource('journals', JournalController::class);
+            Route::apiResource('articles', ArticleController::class);
+
         });
    });
 }) ;

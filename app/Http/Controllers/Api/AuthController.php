@@ -14,12 +14,9 @@ use App\Models\EmailVerification;
 use App\Models\User;
 use App\Services\VerificationService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Laravel\Passport\RefreshTokenRepository;
-use Laravel\Passport\Token;
-use Laravel\Passport\TokenRepository;
+
 use DB;
 
 class AuthController extends Controller
@@ -48,18 +45,28 @@ class AuthController extends Controller
 
     public function register(RegistrationRequest $request): JsonResponse
     {
-        /** @var User $user */
-        $user = User::create($request->validated());
+        $input = $request->validated();
+
+        $input['password'] = bcrypt($input['password']);
+
+        $user = User::create($input);
 
         $user->assignRole('creator administrator');
 
-        $token = $user->createToken("$user->first_name $user->last_name token")->accessToken;
+        $accessToken  = $user->createToken("$user->first_name $user->last_name token")->accessToken;
 
         VerificationService::generateAndSendOtp($user);
 
         return $this->success(
             message: 'Registration successful',
-            data: ['token' => $token]
+            data: [
+                'type' => 'user',
+                'id' => strval($user->id),
+                'attributes' => [
+                    'access_token' => $accessToken
+                ],
+            ],
+            status: HttpStatusCode::SUCCESSFUL->value
         );
     }
 
@@ -79,6 +86,7 @@ class AuthController extends Controller
         }
 
         return DB::transaction(function () use ($loggedUser, $isValidOtp) {
+
             $loggedUser->update(['email_verified_at' => now()]);
 
             $isValidOtp->delete();
@@ -148,23 +156,61 @@ class AuthController extends Controller
         );
     }
 
+
     public function logout(): JsonResponse
     {
-        /** @var User $user */
-        $user = auth()->user();
+        try {
+            //code...
+            /** @phpstan-ignore-next-line */
+            Auth::guard('api')->user()->token()->revoke();
 
-        /** @var Token $token */
-        $token = $user->token();
+            return $this->success(
+                message: 'Logout successful',
+                status: HttpStatusCode::SUCCESSFUL->value
+            );
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $this->failure(
+                message: $th->getMessage(),
+                status: HttpStatusCode::NOT_FOUND->value
+            );
+        }
+    }
 
-        $tokenRepository = app(TokenRepository::class);
-        $refreshTokenRepository = app(RefreshTokenRepository::class);
+    // get access token sanctum
 
-        // Revoke an access token...
-        $tokenRepository->revokeAccessToken($token->id);
+    public function getAccessToken(
+        LoginRequest $request
+    ): JsonResponse {
+        $user = User::where(
+            'email',
+            $request->validated()
+        )->first();
 
-        // Revoke all of the token's refresh tokens...
-        $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($token->id);
+        if (!$user || !Hash::check(
+            $request->validated(),
+            $user->password
+        )) {
+            return $this->failure(
+                message: 'The provided credentials are incorrect.',
+                status: HttpStatusCode::FORBIDDEN->value
+            );
+        }
 
-        return response()->json(['message' => 'Logged out successfully']);
+        $token = $user->createToken("API Token")->accessToken;
+        //get stream token to initialize cha
+
+
+        return $this->success(
+            message: 'Access token generated',
+            data: [
+                'type' => 'user',
+                'id' => strval($user->id),
+                'attributes' => [
+                    'access_token' => $token
+                ],
+            ],
+            status: HttpStatusCode::SUCCESSFUL->value
+        );
     }
 }

@@ -17,7 +17,7 @@ it('can category/ be created', function () {
 
     $response = $this->post(route('category.store'), $data);
 
-    $response->assertStatus(HttpStatusCode::SUCCESSFUL->value);
+    $response->assertStatus(201);
 
     assertDatabaseCount('categories', 1);
     assertDatabaseHas('categories', $data);
