@@ -1,52 +1,53 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+executors:
+  my-custom-executor:
     docker:
       - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+        auth:
+          # ensure you have first added these secrets
+          # visit app.circleci.com/settings/project/github/ikeogu/AIIRPUB/environment-variables
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
+jobs:
+  iiarpub-job:
+    environment:
+      DB_DATABASE: ishledpg_stage_api
+      DB_USERNAME: ishledpg_stage_api
+      DB_PASSWORD: P@$$w0rd@123
+      DB_PORT: 3306
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+    executor: my-custom-executor
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+      - run: |
+          version: 2.1
+          
+          jobs:
+            build:
+              docker:
+                - image: cimg/base:stable
+                  
+              working_directory: ~/repo
+              steps:
+                - checkout
+                - run: cp .env.testing .env
+                - run: composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts
+                - run: php artisan key:generate
+                - run: php artisan config:clear
+                - run: php artisan migrate --seed
+                - run:
+                    name: PHPStan
+                    command: ./vendor/bin/phpstan analyze --memory-limit=-1 --no-progress
+                - run:
+                    name: Code Analysis
+                    command: ./vendor/bin/phpstan analyse
+                - run:
+                    name: PHPUnit
+                    command: ./vendor/bin/pest --parallel --coverage --min=80
+          
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  my-custom-workflow:
     jobs:
-        runs-on: ubuntu-latest
-
-      steps:
-      - uses: actions/checkout@v3
-
-      - name: Validate composer.json and composer.lock
-        run: composer validate --strict
-
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-
-      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-      # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-      - name: Run phpstan
-        run: vendor/bin/phpstan analyze -c phpstan.neon --no-progress --no-interaction
-
-      - name: Run pest
-        run: vendor/bin/pest
+      - iiarpub-job
