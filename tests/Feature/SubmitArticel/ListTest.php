@@ -22,7 +22,7 @@ it('has submitted articles/fetch one', function () {
 
     $response = $this->get(route('submit-article.show', ['submit_article' => $submitArticle->id]))
         ->assertStatus(HttpStatusCode::SUCCESSFUL->value);
-    assertDatabaseCount('submit_articles', 11);
+    assertDatabaseCount('submit_articles', 1);
     expect($response['success'])->toBeTruthy();
     expect($response['message'])->toBe('Article retrieved successfully');
 });

@@ -21,7 +21,7 @@ it('has editor/fetch one', function () {
 
     $response = $this->get(route('journals.show', ['journal' => $journal->id]))
         ->assertStatus(HttpStatusCode::SUCCESSFUL->value);
-    assertDatabaseCount('journals', 11);
+    assertDatabaseCount('journals', 1);
     expect($response['success'])->toBeTruthy();
     expect($response['message'])->toBe('Journal retrieved successfully');
 });

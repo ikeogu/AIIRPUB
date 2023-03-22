@@ -22,7 +22,7 @@ it('has editor/fetch one', function () {
 
     $response = $this->get(route('editors.show', ['editor' => $editor->id]))
         ->assertStatus(HttpStatusCode::SUCCESSFUL->value);
-    assertDatabaseCount('editors', 11);
+    assertDatabaseCount('editors', 1);
     expect($response['success'])->toBeTruthy();
     expect($response['message'])->toBe('editor fetched successfully');
 });

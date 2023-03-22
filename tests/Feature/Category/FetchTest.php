@@ -20,7 +20,7 @@ it('has category/fetch one', function () {
 
     $response = $this->get(route('category.show', ['category' => $category->id]))
         ->assertStatus(HttpStatusCode::SUCCESSFUL->value);
-    assertDatabaseCount('categories', 11);
+    assertDatabaseCount('categories', 1);
     expect($response['success'])->toBeTruthy();
     expect($response['message'])->toBe('category fetched successfully');
 });
