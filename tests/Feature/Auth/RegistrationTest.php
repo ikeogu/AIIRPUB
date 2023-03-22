@@ -42,6 +42,6 @@ it('cannot register if validation error', function () {
 
     $response->assertStatus(HttpStatusCode::VALIDATION_ERROR->value);
 
-    assertDatabaseCount('users', 1);
+    assertDatabaseCount('users', 0);
     assertDatabaseMissing('users', Arr::except($data, ['password']));
 });

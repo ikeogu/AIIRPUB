@@ -40,7 +40,7 @@ it('cannot verify otp if  validation error', function () {
 
     $response->assertStatus(HttpStatusCode::VALIDATION_ERROR->value);
 
-    assertDatabaseCount('email_verifications', 2);
+    assertDatabaseCount('email_verifications', 1);
     assertDatabaseHas('email_verifications', ['otp' => $otpModel->otp]);
 });
 
@@ -56,7 +56,7 @@ it('cannot verify otp if otp supplied has expired', function () {
 
     $response->assertStatus(HttpStatusCode::BAD_REQUEST->value);
 
-    assertDatabaseCount('email_verifications', 3);
+    assertDatabaseCount('email_verifications', 1);
     assertDatabaseHas('email_verifications', ['otp' => $otpModel->otp]);
 
     expect(json_decode($response->getContent(), true))->toMatchArray([
@@ -72,7 +72,7 @@ it('can resend otp', function () {
 
     $response->assertStatus(HttpStatusCode::SUCCESSFUL->value);
 
-    assertDatabaseCount('email_verifications', 4);
+    assertDatabaseCount('email_verifications', 1);
 
     expect(json_decode($response->getContent(), true))->toMatchArray([
         'success' => true,

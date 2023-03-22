@@ -21,7 +21,7 @@ it('has article/fetch one', function () {
 
     $response = $this->get(route('articles.show', ['article' => $article]))
         ->assertStatus(HttpStatusCode::SUCCESSFUL->value);
-    assertDatabaseCount('articles', 11);
+    assertDatabaseCount('articles', 1);
     expect($response['success'])->toBeTruthy();
     expect($response['message'])->toBe('Article details');
 });
