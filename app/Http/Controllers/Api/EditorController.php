@@ -63,7 +63,9 @@ class EditorController extends Controller
 
         return $this->success(
             message: 'editor created successfully',
-            data: new EditorResource($editor),
+            data: [
+                'editor' => new EditorResource($editor)
+            ],
             status: HttpStatusCode::CREATED->value
         );
     }
@@ -74,7 +76,9 @@ class EditorController extends Controller
         //
         return $this->success(
             message: 'editor fetched successfully',
-            data: new EditorResource($editor),
+            data: [
+                'editor' => new EditorResource($editor)
+            ],
             status: HttpStatusCode::SUCCESSFUL->value
         );
     }
@@ -87,7 +91,9 @@ class EditorController extends Controller
 
         return $this->success(
             message: 'editor updated successfully',
-            data: new EditorResource($editor),
+            data:[
+                'editor' => new EditorResource($editor)
+            ],
             status: HttpStatusCode::SUCCESSFUL->value
         );
     }

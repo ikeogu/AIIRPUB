@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @mixin  \App\Models\SubmitArticle */
 class SubmitArticleResource extends JsonResource
 {
     /**
@@ -22,7 +23,7 @@ class SubmitArticleResource extends JsonResource
                 'authors_email' => $this->authors_email,
                 'title_of_article' => $this->title_of_article,
                 'country' => $this->country,
-                'article' => $this->article,
+                'attachment' => $this->attachment,// @phpstan-ignore-line
                 'status' => $this->status,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,

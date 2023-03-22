@@ -25,7 +25,7 @@ class SubmitArticle extends Model implements HasMedia
     protected $guarded = ['id'];
 
     /** @codeCoverageIgnore */
-    protected function article(): Attribute
+    protected function attachment(): Attribute
     {
         return Attribute::make(
             get: fn () => $this->getFirstMedia('article') ?: null

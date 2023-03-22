@@ -38,7 +38,9 @@ class JournalController extends Controller
 
         return $this->success(
             message: 'Journal retrieved successfully',
-            data: $journal,
+            data: [
+                'journal' => $journal
+            ],
             status: HttpStatusCode::SUCCESSFUL->value
         );
     }
@@ -52,7 +54,9 @@ class JournalController extends Controller
 
         return $this->success(
             message: 'Journal created successfully',
-            data: $journal,
+            data: [
+                'journal' => $journal
+            ],
             status: HttpStatusCode::CREATED->value
         );
     }
@@ -63,7 +67,9 @@ class JournalController extends Controller
 
         return $this->success(
             message: 'Journal updated successfully',
-            data: $journal,
+            data: [
+                'journal' => $journal
+            ],
             status: HttpStatusCode::SUCCESSFUL->value
         );
     }
@@ -74,7 +80,9 @@ class JournalController extends Controller
 
         return $this->success(
             message: 'Journal deleted successfully',
-            data: $journal,
+            data: [
+                'journal' => $journal
+            ],
             status: HttpStatusCode::SUCCESSFUL->value
         );
     }
