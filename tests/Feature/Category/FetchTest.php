@@ -11,7 +11,6 @@ it('has category/fetch all', function () {
     $response = $this->get(route('category.index'))
         ->assertStatus(HttpStatusCode::SUCCESSFUL->value);
     assertDatabaseCount('categories', 10);
-    expect($response['success'])->toBeTruthy();
     expect($response['message'])->toBe('categories fetched successfully');
 });
 

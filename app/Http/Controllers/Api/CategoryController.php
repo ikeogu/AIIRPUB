@@ -9,30 +9,45 @@ use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CategoryController extends Controller
 {
 
     // index
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
         //
-        $categories = Category::all();
+        $categories = QueryBuilder::for(Category::class)
+            ->allowedFilters([
+                'title',
+                'description',
+                'status',
+            ])
+            ->allowedSorts([
+                'title',
+                'description',
+                'status',
+            ])
+            ->allowedFields([
+                'title',
+                'description',
+                'status',
+            ])
+            ->paginate(25);
 
-        return $this->success(
+        $categories = CategoryResource::collection($categories)->response()->getData(true);
+
+        return $this->allListing(
+            $categories,
             message: 'categories fetched successfully',
-            data: [
-                'categories' => CategoryResource::collection($categories)
-            ],
             status: HttpStatusCode::SUCCESSFUL->value
         );
-
     }
 
     // show
 
-    public function show(Category $category) : JsonResponse
+    public function show(Category $category): JsonResponse
     {
         //
         return $this->success(
@@ -46,13 +61,14 @@ class CategoryController extends Controller
 
     // store
 
-    public function store(CategoryRequest $request) : JsonResponse
+    public function store(CategoryRequest $request): JsonResponse
     {
         //
         /** @var Category $category */
         $category = Category::create($request->validated());
 
-        if($request->hasFile('cover_photo')) {
+
+        if (!empty($request->validated()['cover_photo'])) {
             $category->addMediaFromRequest('cover_photo')->toMediaCollection('cover_photo');
         }
 
@@ -61,13 +77,13 @@ class CategoryController extends Controller
             data: [
                 'category' => new CategoryResource($category)
             ],
-            status: HttpStatusCode::SUCCESSFUL->value
+            status: HttpStatusCode::CREATED->value
         );
     }
 
     // update
 
-    public function update(CategoryRequest $request, Category $category) : JsonResponse
+    public function update(CategoryRequest $request, Category $category): JsonResponse
     {
         //
         $category->update($request->validated());
@@ -83,7 +99,7 @@ class CategoryController extends Controller
 
     // destroy
 
-    public function destroy(Category $category) : JsonResponse
+    public function destroy(Category $category): JsonResponse
     {
         //
         $category->delete();
@@ -93,5 +109,4 @@ class CategoryController extends Controller
             status: HttpStatusCode::SUCCESSFUL->value
         );
     }
-
 }

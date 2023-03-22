@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyOtpRequest extends FormRequest
+class JournalUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,14 @@ class VerifyOtpRequest extends FormRequest
     {
         return [
             //
-            'otp' => ['required', 'numeric', 'min_digits:4', 'max_digits:4', 'exists:email_verifications,otp']
+            'name' => 'nullable|string',
+            'volume' => 'nullable|string',
+            'issue' => 'nullable|string',
+            'year' => 'nullable|string',
+            'month' => 'nullable|string',
+            'issn' => 'nullable|string',
+            'data.relationships.category.id' => 'nullable|exists:categories,id',
+
         ];
     }
 }

@@ -27,4 +27,15 @@ trait RespondsWithHttpStatus
             'message' => $message,
         ], $status);
     }
+    protected function allListing(mixed $resource, string $message,
+    int $status = 200): JsonResponse
+    {
+        // @var Collection $collect
+        $collect = collect($resource)->toArray(); // @phpstan-ignore-line
+        return response()->json([
+            "status" => "success",
+            "message" => $message,
+            ...$collect
+        ],$status);
+    }
 }

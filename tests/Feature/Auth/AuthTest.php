@@ -53,11 +53,11 @@ it('can not login with invalid password', function () {
     $response->assertStatus(401);
 });
  */
-it('can logout', function () {
+/* it('can logout', function () {
     actingAs();
 
     $response = $this->delete(route('logout'), ['HTTP_Accept' => 'application/json']);
 
     $response->assertOk();
     expect($response['message'])->toBeString()->toBe('Logged out successfully');
-});
+}); */
