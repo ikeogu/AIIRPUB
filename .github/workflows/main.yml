@@ -14,6 +14,10 @@ jobs:
 
     env:
       COMPOSER_VERSION: 2
+      DB_HOST: ${{ secrets.db_host }}
+      DB_DATABASE: ${{ secrets.db_name }}
+      DB_USERNAME: ${{ secrets.db_username }}
+      DB_PASSWORD: ${{ secrets.db_password }}
 
     steps:
       - uses: actions/checkout@v3
@@ -42,7 +46,10 @@ jobs:
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: install --ignore-platform-req=ext-exif
-
+          
+      - name: Run database migrations
+        run: php artisan migrate --force
+        
       - name: Run phpstan
         run: vendor/bin/phpstan analyze -c phpstan.neon --no-progress --no-interaction
 
