@@ -43,10 +43,11 @@ class SubmitArticleController extends Controller
         //
 
         $request['status'] = 'pending';
+        /** @var SubmitArticle $submitted */
         $submitted = SubmitArticle::create($request->validated());
 
         if($request->hasFile('article')){
-            $submitted->addMedia($request->file('article'))->toMediaCollection('article');
+            $submitted->addMediaFromRequest('article')->toMediaCollection('article');
         }
 
         //send mail to request email
@@ -87,7 +88,7 @@ class SubmitArticleController extends Controller
     public function update(Request $request, SubmitArticle $submitArticle) : JsonResponse
     {
         //
-        $submitArticle->update(['status', $request->status]);
+        $submitArticle->update(['status' => $request->status]);
 
         $message = "Your article with title: {$submitArticle->title_of_article} has been {$request->status} successfully. We will get back to you shortly";
         Mail::to($submitArticle->authors_email)->send(new MailArticleSubmitter($message, $submitArticle->authors_name));
@@ -95,7 +96,9 @@ class SubmitArticleController extends Controller
 
         return $this->success(
             message: "Article updated successfully",
-            data: new SubmitArticleResource($submitArticle)
+            data: [
+                'article' => new SubmitArticleResource($submitArticle),
+            ]
 
         );
     }

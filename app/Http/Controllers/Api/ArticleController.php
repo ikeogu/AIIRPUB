@@ -42,7 +42,7 @@ class ArticleController extends Controller
                 'status',
             ])
             ->paginate(25);
-
+            // @var Collection $articles
         $articles = ArticleResource::collection($articles)->response()->getDate();
 
         return $this->allListing(
@@ -57,7 +57,9 @@ class ArticleController extends Controller
 
         return $this->success(
           message:'Article details',
-          data: $article,
+          data: [
+            'article' => $article,
+          ],
           status: HttpStatusCode::SUCCESSFUL->value
         );
     }
@@ -95,7 +97,9 @@ class ArticleController extends Controller
 
             return $this->success(
                 message: 'Article Published successfully',
-                data: $article,
+                data: [
+                    'article' => $article,
+                ],
                 status: HttpStatusCode::CREATED->value
             );
        } catch (\Throwable $th) {
@@ -115,7 +119,7 @@ class ArticleController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = auth()->user();
-        
+
         $article->update($request->validated());
 
         if($request->hasFile('attachment')) {
@@ -127,7 +131,9 @@ class ArticleController extends Controller
 
         return $this->success(
           message:'Article updated successfully',
-          data: $article,
+          data: [
+            'article' => $article,
+          ],
           status: HttpStatusCode::SUCCESSFUL->value
         );
     }
