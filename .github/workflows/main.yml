@@ -41,7 +41,7 @@ jobs:
         uses: baschny/php-composer-action@v1
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
-          command: install
+          command: install --ignore-platform-req=ext-exif
 
       - name: Run phpstan
         run: vendor/bin/phpstan analyze -c phpstan.neon --no-progress --no-interaction
@@ -77,7 +77,7 @@ jobs:
         uses: baschny/php-composer-action@v1
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
-          command: install
+          command: install --ignore-platform-req=ext-exif
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
