@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-/** @mixin App\Models\Editor */
+/** @mixin \App\Models\Editor */
 class EditorResource extends JsonResource
 {
     /**
