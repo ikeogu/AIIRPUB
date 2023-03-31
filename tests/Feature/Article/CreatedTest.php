@@ -17,7 +17,6 @@ it('can publish article', function () {
 
     $file = UploadedFile::fake()->create('article.pdf', 1000, 'application/pdf');
 
-
     $data = [
         'title' => fake()->title(),
         'abstract' => fake()->text(),
