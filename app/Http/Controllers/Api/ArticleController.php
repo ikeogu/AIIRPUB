@@ -86,7 +86,6 @@ class ArticleController extends Controller
 
             $article->journal()->associate($journal);
 
-
             $msg = ' Hope this finds you well, we have successfully published your article with title ' . $article->title .
                 ' on our platform., thank you for your contribution.';
 
@@ -103,7 +102,7 @@ class ArticleController extends Controller
                 status: HttpStatusCode::CREATED->value
             );
        } catch (\Throwable $th) {
-        //throw $th;
+        
         Log::info("::::::: Article not published :::::::");
         Log::error($th->getMessage());
         Log::info("::::::: Article not published :::::::");
