@@ -102,7 +102,7 @@ class ArticleController extends Controller
                 status: HttpStatusCode::CREATED->value
             );
        } catch (\Throwable $th) {
-        
+
         Log::info("::::::: Article not published :::::::");
         Log::error($th->getMessage());
         Log::info("::::::: Article not published :::::::");
@@ -143,6 +143,16 @@ class ArticleController extends Controller
 
         return $this->success(
           message:'Article deleted successfully',
+          status: HttpStatusCode::SUCCESSFUL->value
+        );
+    }
+
+    public function publish(Article $article) : JsonResponse
+    {
+        $article->update(['status' => true]);
+
+        return $this->success(
+          message:'Article published successfully',
           status: HttpStatusCode::SUCCESSFUL->value
         );
     }
